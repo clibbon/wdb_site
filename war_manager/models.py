@@ -8,6 +8,7 @@ class Customer(models.Model):
     last_name = models.CharField(max_length=30, blank=False)
     mob_number = models.CharField(max_length=24, blank=True)
     region = models.IntegerField(blank=True, null=True)
+    profile = models.ForeignKey(User)
     
     def __str__(self):
         return self.first_name + ' ' + self.last_name
