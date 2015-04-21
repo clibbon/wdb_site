@@ -61,9 +61,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'warranty_db',
-        'USER': 'clibbon',
+        'USER': 'root',
         'PASSWORD': 'qqqqqq',
-        'HOST': '127.0.0.1',
+        'HOST': '95.138.172.182',
         'PORT': '5432',
         
     }
