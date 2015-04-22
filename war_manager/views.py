@@ -29,7 +29,12 @@ class ImportProductView(CreateView):
         context['action'] = reverse('import-test')
         
         return context
+
+def addProductToDatabase(request):
     
+    
+    return HttpResponse(model)
+
 class Placeholder(TemplateView):
     print 'at placeholder'
     template_name = 'placeholder.html'
