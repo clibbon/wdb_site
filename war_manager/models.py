@@ -8,7 +8,7 @@ class Customer(models.Model):
     last_name = models.CharField(max_length=30, blank=False)
     mob_number = models.CharField(max_length=24, blank=True)
     region = models.IntegerField(blank=True, null=True)
-    profile = models.ForeignKey(User, default = 0)
+    profile = models.ForeignKey(User, default = 1)
     
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -42,8 +42,11 @@ class Warranty(models.Model):
     ser_num = models.CharField(max_length=30, blank=True)
     reg_date = models.DateField(blank=True, null=True)
     exp_date = models.DateField(blank=True, null=True)
-    customer = models.ForeignKey(Customer)
-     
+    customer = models.ForeignKey(Customer, null=True)
+    
+    class Meta:
+        verbose_name_plural = 'Warranties'
+        
 class Product(models.Model):
     pid = models.AutoField(primary_key=True)  # Field name made lowercase.
     ser_num = models.CharField(max_length=30, blank=False)

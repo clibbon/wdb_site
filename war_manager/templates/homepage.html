@@ -1,6 +1,14 @@
-<p>Welcome to the home page.</p>
+{% extends "base.html" %}
 
-<a href="{% url "service_login" %}">Service Login</a>
-<a href="{% url "customer_login" %}">Customer Login</a>
-<a href="{% url "importer_login" %}">Importer Login</a>
+{% block content %}
 
+<p>Welcome to the warranty service home page.</p>
+
+{{ user }}
+{% if user.is_anonymous %}
+<a href="{% url "login" %}">Login</a>
+{% else %}
+<a href="{% url 'user-redirect' %}">To page</a>
+{% endif %}
+
+{% endblock %}
