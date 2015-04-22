@@ -38,6 +38,8 @@ class ImporterAdmin(admin.ModelAdmin):
 class WarrantyAdmin(admin.ModelAdmin):
     list_display = ('reg_date','exp_date')
     list_filter = ['reg_date']
+    
+    inlines = [ProductInline]
 
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('date_received', 'mob_number', 'msg_text')

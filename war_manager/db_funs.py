@@ -9,7 +9,7 @@ Functions for saving the data to the database in django,
 """
 
 from datetime import datetime
-from war_manager.models import (Customer, Product, Warranty)
+from war_manager.models import (Customer, Product, Warranty, ProductModel)
 from lists import regions
 import time
 
@@ -38,14 +38,13 @@ def checkCustomer(detailDict,mob_num):
     
 # Function checks if a product exists
 def checkProduct(detailDict):
+    m = ProductModel.objects.get(model = detailDict['ModNo'])
     p, newProduct = Product.objects.get_or_create(
         ser_num = detailDict['SerNo'],
-        model = detailDict['ModNo']
-        )
+        model = m)
     
     if newProduct:
         print 'New product created'
-        
     return p.pid
 
 # Function checks if a warranty exists
@@ -62,6 +61,7 @@ def addToDatabase(detailDict,mob_num):
     # Check if customer and/or warranty already exist
     cId = checkCustomer(detailDict,mob_num)
     pId = checkProduct(detailDict)
+    
     # Check if a warranty exists already
     if warrantyExists(cId,pId):
         return [False, cId, pId]
@@ -77,14 +77,10 @@ def createWarranty(detailDict, cId, pId):
     p = Product.objects.get(pid=pId)
     c = Customer.objects.get(cid=cId)
     # Get warranty length
-    print p.productmodel_set.war_length
+    war_len = int(ProductModel.objects.filter(product__pid=pId)[0].war_length)
     w = Warranty.objects.create(
-        ser_num = detailDict['SerNo'],
         reg_date = datetime.now().date(),
-        exp_date = getWarrantyEnd(str(datetime.now().date()),
-                                  int(p.productmodel_set.values_list('war_length',flat=True))
-                                  )
-    )
+        exp_date = getWarrantyEnd(str(datetime.now().date()),war_len))
     c.warranty_set.add(w)
     w.product_set.add(p)
     

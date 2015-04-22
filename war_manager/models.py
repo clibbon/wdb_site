@@ -32,6 +32,9 @@ class ProductModel(models.Model):
     is_verified = models.BooleanField(default=False)
     war_length = models.IntegerField(default=0, blank=True)
     
+    def __str__(self):
+        return self.model
+    
 class ProductImport(models.Model):
     pid = models.AutoField(primary_key=True)  # Field name made lowercase.
     imp_date = models.DateField(blank=True, null=True)
@@ -39,10 +42,12 @@ class ProductImport(models.Model):
 
 class Warranty(models.Model):
     wid = models.AutoField(primary_key=True)  # Field name made lowercase.
-    ser_num = models.CharField(max_length=30, blank=True)
     reg_date = models.DateField(blank=True, null=True)
     exp_date = models.DateField(blank=True, null=True)
     customer = models.ForeignKey(Customer, null=True)
+    
+    def __str__(self):
+        return 'exp: ' + str(self.exp_date)
     
     class Meta:
         verbose_name_plural = 'Warranties'

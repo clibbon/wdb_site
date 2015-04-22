@@ -15,6 +15,7 @@ from nltk import pos_tag
 import twilio.twiml
 from db_funs import saveMsgHistory,addToDatabase
 import sys
+from django.http.response import HttpResponse
 
 class AppError(Exception):
     """ Class for all my errors from this app"""
@@ -56,15 +57,17 @@ def handleMessage(request):
     elif keyWord == 'retry':
         try:
             detailDict = getStructuredTextInfo(msgText)
+            resp = addDetailsToCookie(detailDict,HttpResponse(resp))
         except Exception as e:
             print e
     else:
         # Parse the text
         try:
-            details = getTextInfo(msgText)
-            resp.message(generateSuccessReply(details))
+            detailDict = getTextInfo(msgText)
+            resp.message(generateSuccessReply(detailDict))
             # Store cookie
-            resp = addDetailsToCookie(details,resp)
+            print resp
+            resp = addDetailsToCookie(detailDict,HttpResponse(resp))
         except AppError as e:
             print e
             resp.message(
