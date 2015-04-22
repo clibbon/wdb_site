@@ -52,8 +52,8 @@ def user_redirect(request):
 # Receive login attempt and redirect to another section
 def login_redirect(request):
     print 'I got here'
-    username = request.POST['username']
-    password = request.POST['password']
+    username = request.POST.get('username')
+    password = request.POST.get('password')
     user = authenticate(username=username, password=password)
     if user is not None:
         print 'And also here'
