@@ -98,19 +98,4 @@
 
     </body>
 </html>
-=======
-{% extends "base.html" %}
 
-{% block content %}
-
-<p>Welcome to the warranty service home page.</p>
-
-{{ user }}
-{% if user.is_anonymous %}
-<a href="{% url "login" %}">Login</a>
-{% else %}
-<a href="{% url 'user-redirect' %}">To page</a>
-{% endif %}
-
-{% endblock %}
->>>>>>> master
