@@ -16,10 +16,9 @@ import time
 # Function to save incoming message to msg log
 def saveMsgHistory(message, sender):
     c = Customer.objects.get(mob_number=sender)
-    m = Message.objects.create(msg_text = message, 
-                                  date_received = datetime.now().date(), \
+    c.message_set.create(msg_text = message, 
+                                  date_received = datetime.now().date(), 
                                   mob_number = sender)
-    c.message_set.add(m)
     
 # Function checks if a customer exists, and if not creates one
 def checkCustomer(detailDict,mob_num):
