@@ -9,13 +9,13 @@ Functions for saving the data to the database in django,
 """
 
 from datetime import datetime
-from war_manager.models import (Message, Customer, Product, Warranty)
+from war_manager.models import (Customer, Product, Warranty)
 from lists import regions
 import time
 
 # Function to save incoming message to msg log
 def saveMsgHistory(message, sender):
-    c = Customer.objects.get(mob_number=sender)
+    c = Customer.objects.get_or_create(mob_number=sender)
     c.message_set.create(msg_text = message, 
                                   date_received = datetime.now().date(), 
                                   mob_number = sender)

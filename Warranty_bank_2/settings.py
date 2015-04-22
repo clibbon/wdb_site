@@ -96,3 +96,5 @@ STATIC_URL = '/static/'
 TEMPLATE_DIRS = (
                  'war_manager/templates',
                  )
+TWILIO_ACCOUNT_SID = 'ACcfee309f80ba0ebcfcc720b7ad679669'
+TWILIO_AUTH_TOKEN = '3f9ab5b43309dda1cd431106166ef9be'
