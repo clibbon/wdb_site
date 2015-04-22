@@ -9,7 +9,8 @@ Functions for saving the data to the database in django,
 """
 
 from datetime import datetime
-from war_manager.models import (Customer, Product, Warranty, ProductModel, Importer)
+from war_manager.models import (Customer, Product, Warranty, ProductModel, Importer,
+    ProductImport)
 from lists import regions
 import time
 
@@ -97,22 +98,33 @@ def getWarrantyEnd(startDate,yearsValid):
         print date
         print getWarrantyEnd(date,warrantyYears)
     """
-    print 'I got into getWarrantyEnd function'
     tempTime = time.mktime(time.strptime(startDate,'%Y-%m-%d'))
-    print 'This line ran'
     tempTime = time.strftime('%Y-%m-%d', time.localtime(tempTime +
                                             3600*24*7*52*yearsValid))
     
     return tempTime
 
 def createProductImport(request):
+    # Read info 
+    importer    = Importer.objects.filter(user_id__username=request.user)[0]
     ser_num     = request.POST['ser_num']
     model_pk    = request.POST['model'] # gives the model pk
-    print request.user
-    importer    = Importer.objects.filter(user_id__username=request.user)
-    p, isNew = Product.objects.get_or_create(ser_num = ser_num,
-                                             model = ProductModel.objects.get(pk=model_pk),
-                                             importer = importer
-                                             )
-    print 'I made it'
+    # Create the product import event
+    p_imp       = ProductImport.objects.create(importer=importer,
+                                               imp_date = datetime.now().date(),
+                                               )
+    # Attach and create the product if it doesn't exist already
+    try:
+        p = Product.objects.get(ser_num = ser_num,
+                            model = ProductModel.objects.get(pk=model_pk),
+                            )
+        p.productImport = p_imp
+        p.save()
+        isNew = False
+    except Product.DoesNotExist:
+        p_imp.product_set.create(ser_num = ser_num,
+                                 model = ProductModel.objects.get(pk=model_pk),
+                                 )
+        isNew = False
+    return isNew
     

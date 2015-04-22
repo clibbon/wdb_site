@@ -27,7 +27,7 @@ class Importer(models.Model):
     identity = models.CharField(max_length=30, blank=True)
     
     def __str__(self):
-        return self.model
+        return self.identity
     
 class ProductModel(models.Model):
     mid = models.AutoField(primary_key=True)  # Field name made lowercase.

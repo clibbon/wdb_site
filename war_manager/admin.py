@@ -2,6 +2,7 @@ from django.contrib import admin
 from war_manager.models import (Customer, Product, ProductImport,
                                 ProductModel, Importer, Warranty,
                                 Message)
+from django.forms.models import BaseInlineFormSet
 
 class WarrantyInline(admin.StackedInline):
     model = Warranty
@@ -11,13 +12,25 @@ class ProductInline(admin.StackedInline):
     model = Product
     extra = 1
 
+class MessageInLineFormSet(BaseInlineFormSet):
+    def get_queryset(self) :
+        qs = super(MessageInLineFormSet, self).get_queryset()
+        print qs.count()
+        if qs.count() <= 5:
+            return qs
+        else:
+            return qs[1:]
+    
 class MessagesInline(admin.TabularInline):
     model = Message
-    extra = 5
+    formset = MessageInLineFormSet
+    extra  = 0
+    class Meta:
+        ordering = ('-date_received',)
 
 # Define field views
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('__str__','mob_number','region','profile')
+    list_display = ('cid','__str__','mob_number','region','profile')
     fieldsets = [
         ('Name',      {'fields':
                      ['first_name','last_name']}),

@@ -17,7 +17,6 @@ class Home(TemplateView):
 
 class TestView(CreateView):
     model = Product
-    
 
 class ImportProductView(CreateView):
     form_class = ImportForm
@@ -37,7 +36,11 @@ class ImportProductView(CreateView):
 
 def addProductToDatabase(request):
     
-    createProductImport(request)
+    isNewProduct = createProductImport(request)
+    if isNewProduct:
+        return redirect('importer-home')
+    else:
+        return HttpResponse('Product already imported')
 
 class Placeholder(TemplateView):
     print 'at placeholder'
@@ -56,6 +59,7 @@ def user_redirect(request):
 # Receive login attempt and redirect to another section
 def login_redirect(request):
     print 'I got here'
+    print request
     username = request.POST.get('username')
     password = request.POST.get('password')
     user = authenticate(username=username, password=password)

@@ -92,6 +92,7 @@ STATICFILES_DIRS = (
                     os.path.join(os.path.dirname(__file__),'static',),
                     )
 STATIC_URL = '/static/'
+STATIC_ROOT = '~/workspace/Warranty_bank_2/src/sitestatic'
 
 TEMPLATE_DIRS = (
                  'war_manager/templates',
