@@ -1,5 +1,14 @@
 Django==1.7.7
 argparse==1.2.1
+django-phonenumber-field==0.7.2
+django-twilio==0.8.0
+fuzzywuzzy==0.5.0
+httplib2==0.9.1
+nltk==3.0.2
+phonenumbers==7.0.4
 psycopg2==2.6
+pytz==2015.2
+six==1.9.0
+twilio==4.0.0
 whitenoise==1.0.6
 wsgiref==0.1.2

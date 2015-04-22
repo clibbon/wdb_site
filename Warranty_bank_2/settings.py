@@ -36,7 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'war_manager'
+    'war_manager',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -61,7 +61,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'warranty_db',
-        'USER': 'root',
+        'USER': 'alex',
         'PASSWORD': 'qqqqqq',
         'HOST': '95.138.172.182',
         'PORT': '5432',
@@ -96,3 +96,5 @@ STATIC_URL = '/static/'
 TEMPLATE_DIRS = (
                  'war_manager/templates',
                  )
+TWILIO_ACCOUNT_SID = 'ACcfee309f80ba0ebcfcc720b7ad679669'
+TWILIO_AUTH_TOKEN = '3f9ab5b43309dda1cd431106166ef9be'
