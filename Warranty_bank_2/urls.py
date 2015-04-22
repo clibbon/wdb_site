@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     url(r'^import/$', war_manager.views.ImportHome.as_view(), name='importer-home'),
     url(r'^redirect/$', war_manager.views.user_redirect, name='user-redirect'),
     url(r'^receiver/$', war_manager.views.text_receiver, name='text-parser'),
+    url(r'^importTest/$', war_manager.views.ImportProductView.as_view(), name='import-test'),
 )

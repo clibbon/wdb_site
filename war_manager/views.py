@@ -1,14 +1,34 @@
 from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
 from django.http.response import HttpResponse
 from django.views.generic.base import TemplateView
+from django.views.generic import CreateView
 from django.contrib.auth import authenticate, login
 from text_funs import handleMessage
+from war_manager.models import Product
 from django_twilio.decorators import twilio_view
+from war_manager.forms import ImportForm
 
 # Create your views here.
 class Home(TemplateView):
     print 'received'
     template_name = 'homepage.html'
+
+class ImportProductView(CreateView):
+    form_class = ImportForm
+    model = Product
+    template_name = 'import_test.html' 
+    #form_class = forms.ContactForm
+    
+    def get_success_url(self):
+        return reverse('importer-home')
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(ImportProductView, self).get_context_data(**kwargs)
+        context['action'] = reverse('import-test')
+        
+        return context
     
 class Placeholder(TemplateView):
     print 'at placeholder'
