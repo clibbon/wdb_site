@@ -1,5 +1,6 @@
 from django import forms
 from war_manager.models import Product, ProductModel
+from django.core.exceptions import ValidationError
 # Forms for website
 
 class ImportForm(forms.ModelForm):
@@ -14,12 +15,12 @@ class ImportForm(forms.ModelForm):
             kwargs.setdefault('initial', {})['confirm_email'] = email
         return super(ImportForm, self).__init__(*args, **kwargs)
     
-    # Check that the two emails match. These steps are performed after the initial
-    # data cleaning that is performed by Django itself
+    # Once the form has been submitted, try and add this to the database
+    # along with everything else
     def clean(self):
-        if (self.cleaned_data.get('email') !=
-            self.cleaned_data.get('confirm_email')):
+        if Product.objects.filter(ser_num=self.cleaned_data.get('ser_num')).exists():
 
+            raise ValidationError('Serial number already exists')
             return self.cleaned_data
         
         

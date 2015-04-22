@@ -17,7 +17,7 @@ class Home(TemplateView):
 class ImportProductView(CreateView):
     form_class = ImportForm
     model = Product
-    template_name = 'import_test.html' 
+    template_name = 'import.html' 
     #form_class = forms.ContactForm
     
     def get_success_url(self):
@@ -26,10 +26,15 @@ class ImportProductView(CreateView):
     def get_context_data(self, **kwargs):
         
         context = super(ImportProductView, self).get_context_data(**kwargs)
-        context['action'] = reverse('import-test')
+        context['action'] = reverse('import')
         
         return context
+
+def addProductToDatabase(request):
     
+    
+    return HttpResponse(model)
+
 class Placeholder(TemplateView):
     print 'at placeholder'
     template_name = 'placeholder.html'
