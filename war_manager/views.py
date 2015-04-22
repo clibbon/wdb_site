@@ -8,11 +8,16 @@ from text_funs import handleMessage
 from war_manager.models import Product
 from django_twilio.decorators import twilio_view
 from war_manager.forms import ImportForm
+from war_manager.db_funs import createProductImport
 
 # Create your views here.
 class Home(TemplateView):
     print 'received'
     template_name = 'homepage.html'
+
+class TestView(CreateView):
+    model = Product
+    
 
 class ImportProductView(CreateView):
     form_class = ImportForm
@@ -26,14 +31,13 @@ class ImportProductView(CreateView):
     def get_context_data(self, **kwargs):
         
         context = super(ImportProductView, self).get_context_data(**kwargs)
-        context['action'] = reverse('import')
+        context['action'] = reverse('importer-home')
         
         return context
 
 def addProductToDatabase(request):
     
-    
-    return HttpResponse(model)
+    createProductImport(request)
 
 class Placeholder(TemplateView):
     print 'at placeholder'

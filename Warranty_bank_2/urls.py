@@ -9,13 +9,12 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', war_manager.views.Home.as_view(), name = 'home'),
-    url(r'^serviceLogin/$', 'django.contrib.auth.views.login', name = 'login'),
-    url(r'^goodbye/$', 'django.contrib.auth.views.logout', name = 'logout'),
     url(r'^loginRedirect/$', war_manager.views.login_redirect, name='login-redirect'),
     url(r'^manage/$', war_manager.views.ManagerHome.as_view(), name='manager-home'),
-    url(r'^import/$', war_manager.views.ImportHome.as_view(), name='importer-home'),
+    url(r'^import/$', war_manager.views.ImportProductView.as_view(), name='importer-home'),
     url(r'^redirect/$', war_manager.views.user_redirect, name='user-redirect'),
     url(r'^receiver/$', war_manager.views.text_receiver, name='text-parser'),
-    url(r'^importTest/$', war_manager.views.ImportProductView.as_view(), name='import'),
-    url(r'^addToDb/$', war_manager.views.addProductToDatabase, name='add-product')
+    url(r'^addToDb/$', war_manager.views.addProductToDatabase, name='add-product'),
+    url(r'^login/$', 'django.contrib.auth.views.login'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout'),
 )

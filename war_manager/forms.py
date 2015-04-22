@@ -9,11 +9,6 @@ class ImportForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['ser_num','model']
-    def __init__(self,*args,**kwargs):
-        if kwargs.get('instance'):
-            email = kwargs['instance'].email
-            kwargs.setdefault('initial', {})['confirm_email'] = email
-        return super(ImportForm, self).__init__(*args, **kwargs)
     
     # Once the form has been submitted, try and add this to the database
     # along with everything else

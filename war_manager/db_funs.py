@@ -9,7 +9,7 @@ Functions for saving the data to the database in django,
 """
 
 from datetime import datetime
-from war_manager.models import (Customer, Product, Warranty, ProductModel)
+from war_manager.models import (Customer, Product, Warranty, ProductModel, Importer)
 from lists import regions
 import time
 
@@ -105,4 +105,14 @@ def getWarrantyEnd(startDate,yearsValid):
     
     return tempTime
 
-
+def createProductImport(request):
+    ser_num     = request.POST['ser_num']
+    model_pk    = request.POST['model'] # gives the model pk
+    print request.user
+    importer    = Importer.objects.filter(user_id__username=request.user)
+    p, isNew = Product.objects.get_or_create(ser_num = ser_num,
+                                             model = ProductModel.objects.get(pk=model_pk),
+                                             importer = importer
+                                             )
+    print 'I made it'
+    
