@@ -15,21 +15,23 @@ import time
 
 # Function to save incoming message to msg log
 def saveMsgHistory(message, sender):
-    c = Customer.objects.get_or_create(mob_number=sender)
+    '''Attempts to save the message, and associate it with as customer
+    If no customer exists already, then make a new one and raise that tag'''
+    print 'I got to saveMsgHistory'
+    c, isNew = Customer.objects.get_or_create(mob_number=sender)
     c.message_set.create(msg_text = message, 
                                   date_received = datetime.now().date(), 
                                   mob_number = sender)
+    return isNew
     
 # Function checks if a customer exists, and if not creates one
 def checkCustomer(detailDict,mob_num):
-    c, newCustomer = Customer.objects.get_or_create(
-        first_name = detailDict['ForeName'],
-        last_name = detailDict['SurName'],
-        mob_number = mob_num,
-        region = regions.index(detailDict['Region'])
-        )
+    c, newCustomer = Customer.objects.get_or_create(mob_number = mob_num,)
     
     if newCustomer:
+        c.first_name    = detailDict['ForeName']
+        c.last_name     = detailDict['SurName']
+        c.region        = regions.index(detailDict['Region'])
         print 'New customer created'
     
     return c.cid
