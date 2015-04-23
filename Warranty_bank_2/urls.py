@@ -17,4 +17,5 @@ urlpatterns = patterns('',
     url(r'^addToDb/$', war_manager.views.addProductToDatabase, name='add-product'),
     url(r'^login/$', 'django.contrib.auth.views.login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout'),
+    url(r'^testPage/$', war_manager.views.TestView.as_view(), name='test-page'),
 )

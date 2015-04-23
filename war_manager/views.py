@@ -17,7 +17,17 @@ class Home(TemplateView):
 
 class TestView(CreateView):
     model = Product
-
+    template_name = 'import.html'
+    # Get the context
+    def get_context_data(self, **kwargs):
+        
+        context = super(TestView, self).get_context_data(**kwargs)
+        context['action'] = reverse('test-page')
+        # Adding my own context
+        context['Products'] = Product.objects.all()
+        
+        return context
+    
 class ImportProductView(CreateView):
     form_class = ImportForm
     model = Product

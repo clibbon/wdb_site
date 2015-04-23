@@ -33,6 +33,7 @@ def checkCustomer(detailDict,mob_num):
         c.first_name    = detailDict['ForeName']
         c.last_name     = detailDict['SurName']
         c.region        = regions.index(detailDict['Region'])
+        c.save()
         print 'New customer created'
     
     return c.cid
@@ -125,6 +126,6 @@ def createProductImport(request):
         p_imp.product_set.create(ser_num = ser_num,
                                  model = ProductModel.objects.get(pk=model_pk),
                                  )
-        isNew = False
+        isNew = True
     return isNew
     

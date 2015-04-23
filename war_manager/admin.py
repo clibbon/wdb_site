@@ -19,7 +19,7 @@ class MessageInLineFormSet(BaseInlineFormSet):
         if qs.count() <= 5:
             return qs
         else:
-            return qs[1:]
+            return qs[ qs.count()-6: qs.count()-1]
     
 class MessagesInline(admin.TabularInline):
     model = Message
@@ -49,7 +49,7 @@ class ImporterAdmin(admin.ModelAdmin):
     list_display = ('identity','iid')
     
 class WarrantyAdmin(admin.ModelAdmin):
-    list_display = ('reg_date','exp_date')
+    list_display = ('wid','reg_date','exp_date')
     list_filter = ['reg_date']
     
     inlines = [ProductInline]
@@ -59,7 +59,7 @@ class MessageAdmin(admin.ModelAdmin):
     list_filter = ['date_received']
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('ser_num',)
+    list_display = ('ser_num','model',)
 
 # Register your models here.
 admin.site.register(Customer, CustomerAdmin)
