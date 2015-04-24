@@ -117,11 +117,11 @@ def getTextInfo(message, debug=False):
 def getStructuredTextInfo(message):
     words = message.split()
     detailDict = {
-    'ForeName' : words[0],
-    'SurName' : words[1],
-    'SerNo' : words[2],
-    'ModNo' : words[3],
-    'Region': words[4]
+    'ForeName' : words[1],
+    'SurName' : words[2],
+    'SerNo' : words[3],
+    'ModNo' : words[4],
+    'Region': words[5]
     }
     return detailDict
 
@@ -249,7 +249,7 @@ def removeRegions(words, region, sens=70):
 # Function extracts keywords from the message (hint: it's the first word)
 def getKeyWord(msgText):
     words = msgText.split()
-    return words[0]
+    return words[0].lower()
 
 # Receipt on successful generation of new warranty
 def generateConfirmationReply(pId, cId):

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from war_manager.models import (Customer, Product, ProductImport,
+from war_manager.models import (Customer, Product,
                                 ProductModel, Importer, Warranty,
                                 Message)
 from django.forms.models import BaseInlineFormSet
@@ -15,7 +15,6 @@ class ProductInline(admin.StackedInline):
 class MessageInLineFormSet(BaseInlineFormSet):
     def get_queryset(self) :
         qs = super(MessageInLineFormSet, self).get_queryset()
-        print qs.count()
         if qs.count() <= 5:
             return qs
         else:
@@ -38,9 +37,6 @@ class CustomerAdmin(admin.ModelAdmin):
                      ['mob_number','region']})
                  ]
     inlines = [WarrantyInline,MessagesInline]
-                 
-class ProductImportAdmin(admin.ModelAdmin):
-    list_display = ('pid', 'imp_date')
     
 class ProductModelAdmin(admin.ModelAdmin):
     list_display = ('model','mid', 'is_verified')
@@ -64,7 +60,6 @@ class ProductAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(ProductImport, ProductImportAdmin)
 admin.site.register(ProductModel, ProductModelAdmin)
 admin.site.register(Importer, ImporterAdmin)
 admin.site.register(Warranty, WarrantyAdmin)

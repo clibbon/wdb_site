@@ -18,4 +18,5 @@ urlpatterns = patterns('',
     url(r'^login/$', 'django.contrib.auth.views.login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout'),
     url(r'^testPage/$', war_manager.views.TestView.as_view(), name='test-page'),
+    url(r'^search/$', war_manager.views.SearchPage, name='search-page'),
 )

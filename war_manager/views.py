@@ -5,7 +5,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic import CreateView
 from django.contrib.auth import authenticate, login
 from text_funs import handleMessage
-from war_manager.models import Product
+from war_manager.models import Product, Importer, Customer
 from django_twilio.decorators import twilio_view
 from war_manager.forms import ImportForm
 from war_manager.db_funs import createProductImport
@@ -15,31 +15,49 @@ class Home(TemplateView):
     print 'received'
     template_name = 'homepage.html'
 
-class TestView(CreateView):
-    model = Product
-    template_name = 'import.html'
+class TestView(TemplateView):
+    template_name = 'test.html'
+    
+    def get_success_url(self):
+        return reverse('test-page')
+    
     # Get the context
     def get_context_data(self, **kwargs):
         
         context = super(TestView, self).get_context_data(**kwargs)
-        context['action'] = reverse('test-page')
-        # Adding my own context
-        context['Products'] = Product.objects.all()
-        
+        context['action'] = reverse('search-page')
         return context
-    
+
+def SearchPage(request):
+    print request.GET
+    qs = Product.objects.all()
+    # If something entered in the name field
+    if 'ser_num' in request.GET:
+        qs = qs.filter(ser_num=request.GET['ser_num'])
+        print qs
+    if 'first_name' in request.GET:
+        print request.GET['first_name']
+    return redirect('test-page')
+
 class ImportProductView(CreateView):
     form_class = ImportForm
     model = Product
-    template_name = 'import.html' 
-    #form_class = forms.ContactForm
+    template_name = 'import.html'
     
     def get_success_url(self):
         return reverse('importer-home')
     
+    # Get the context
     def get_context_data(self, **kwargs):
         
         context = super(ImportProductView, self).get_context_data(**kwargs)
+        # Adding my own context
+        user = self.request.user
+        print user
+        importer = Importer.objects.get(user_id__username='test_importer')
+        print 'made it'
+        print importer
+        context['Products'] = Product.objects.filter(importer=importer)[:5]
         context['action'] = reverse('importer-home')
         
         return context

@@ -9,16 +9,16 @@ Functions for saving the data to the database in django,
 """
 
 from datetime import datetime
-from war_manager.models import (Customer, Product, Warranty, ProductModel, Importer,
-    ProductImport)
+from war_manager.models import (Customer, Product, Warranty, ProductModel, Importer)
 from lists import regions
 import time
+from django.db.utils import IntegrityError
+from __builtin__ import False
 
 # Function to save incoming message to msg log
 def saveMsgHistory(message, sender):
     '''Attempts to save the message, and associate it with as customer
     If no customer exists already, then make a new one and raise that tag'''
-    print 'I got to saveMsgHistory'
     c, isNew = Customer.objects.get_or_create(mob_number=sender)
     c.message_set.create(msg_text = message, 
                                   date_received = datetime.now().date(), 
@@ -28,14 +28,15 @@ def saveMsgHistory(message, sender):
 # Function checks if a customer exists, and if not creates one
 def checkCustomer(detailDict,mob_num):
     c, newCustomer = Customer.objects.get_or_create(mob_number = mob_num,)
-    
-    if newCustomer:
+    print newCustomer
+    print c.first_name == 'None'
+    if newCustomer or c.first_name == 'None':
         c.first_name    = detailDict['ForeName']
         c.last_name     = detailDict['SurName']
         c.region        = regions.index(detailDict['Region'])
         c.save()
-        print 'New customer created'
-    
+        print 'New customer created/details updated'
+        
     return c.cid
     
 # Function checks if a product exists
@@ -106,26 +107,31 @@ def getWarrantyEnd(startDate,yearsValid):
     return tempTime
 
 def createProductImport(request):
-    # Read info 
+    # Read info about import request - who's trying to import
     importer    = Importer.objects.filter(user_id__username=request.user)[0]
     ser_num     = request.POST['ser_num']
     model_pk    = request.POST['model'] # gives the model pk
-    # Create the product import event
-    p_imp       = ProductImport.objects.create(importer=importer,
-                                               imp_date = datetime.now().date(),
-                                               )
+    hasAnotherImporter = False          # A check that we haven't already imported the product
     # Attach and create the product if it doesn't exist already
     try:
         p = Product.objects.get(ser_num = ser_num,
                             model = ProductModel.objects.get(pk=model_pk),
                             )
-        p.productImport = p_imp
-        p.save()
-        isNew = False
+        if p.importer is not None:
+            p.importer = importer
+            p.imp_date = datetime.now().date()
+            p.save()
+        else:
+            hasAnotherImporter = True
+            print "database error in CreateProductImport"
+            isNew = False
     except Product.DoesNotExist:
-        p_imp.product_set.create(ser_num = ser_num,
-                                 model = ProductModel.objects.get(pk=model_pk),
-                                 )
+        Product.objects.create(ser_num  = ser_num,
+                               model    = ProductModel.objects.get(pk=model_pk),
+                               importer = importer,
+                               imp_date = datetime.now().date()
+                               )
         isNew = True
-    return isNew
+         
+    return isNew, hasAnotherImporter
     

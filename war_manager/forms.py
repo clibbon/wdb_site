@@ -1,5 +1,5 @@
 from django import forms
-from war_manager.models import Product, ProductModel
+from war_manager.models import Product, ProductModel, Customer
 from django.core.exceptions import ValidationError
 # Forms for website
 
@@ -18,4 +18,5 @@ class ImportForm(forms.ModelForm):
             raise ValidationError('Serial number already exists')
             return self.cleaned_data
         
+
         

@@ -4,9 +4,9 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Customer(models.Model):
     cid = models.AutoField(primary_key=True)  # Field name made lowercase.
-    first_name = models.CharField(max_length=30, blank=False)
-    last_name = models.CharField(max_length=30, blank=False)
-    mob_number = models.CharField(max_length=24, blank=True)
+    first_name = models.CharField(max_length=30, blank=False, default='None')
+    last_name = models.CharField(max_length=30, blank=False, default='Set')
+    mob_number = models.CharField(max_length=24, blank=True, null=True)
     region = models.IntegerField(blank=True, null=True)
     profile = models.ForeignKey(User, default = 1)
     
@@ -37,11 +37,6 @@ class ProductModel(models.Model):
     
     def __str__(self):
         return self.model
-    
-class ProductImport(models.Model):
-    pid = models.AutoField(primary_key=True)  # Field name made lowercase.
-    imp_date = models.DateField(blank=True, null=True)
-    importer = models.ForeignKey(Importer)
 
 class Warranty(models.Model):
     wid = models.AutoField(primary_key=True)  # Field name made lowercase.
@@ -59,8 +54,15 @@ class Product(models.Model):
     pid = models.AutoField(primary_key=True)  # Field name made lowercase.
     ser_num = models.CharField(max_length=30, blank=False)
     model = models.ForeignKey(ProductModel)
-    productImport = models.ForeignKey(ProductImport, null=True)
     warranty = models.ForeignKey(Warranty, null=True)
+    imp_date = models.DateField(blank=True, null=True)
+    importer = models.ForeignKey(Importer, null=True)
+    
+    def __str__(self):
+        return self.ser_num
+    
+    class Meta:
+        ordering = ['-pid']
     
 class Message(models.Model):
     id = models.AutoField(primary_key=True)
@@ -72,6 +74,8 @@ class Message(models.Model):
     def __str__(self):
         return self.msg_text
     
+    class Meta:
+        ordering = ['-id']
     
     
     
