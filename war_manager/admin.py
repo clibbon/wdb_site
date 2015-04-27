@@ -55,7 +55,7 @@ class MessageAdmin(admin.ModelAdmin):
     list_filter = ['date_received']
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('ser_num','model',)
+    list_display = ('pid','ser_num','model',)
 
 # Register your models here.
 admin.site.register(Customer, CustomerAdmin)

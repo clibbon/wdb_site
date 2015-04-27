@@ -47,7 +47,7 @@ def handleMessage(request):
         try:
             detailDict = getDetailsFromCookie(request)
             # Add to database
-            warCreated, pId, cId = addToDatabase(detailDict,msgSender)
+            warCreated, cId, pId = addToDatabase(detailDict,msgSender)
             if warCreated:
                 resp.message(generateConfirmationReply(pId, cId))
             else:
@@ -79,7 +79,6 @@ def handleMessage(request):
         except Exception as e:
             print e
             
-    print resp
     return resp
 
 
@@ -255,8 +254,11 @@ def getKeyWord(msgText):
 # Receipt on successful generation of new warranty
 def generateConfirmationReply(pId, cId):
     # Get status of product and warranty
-    p = Product.objects.get(pk=pId)
-    if p.model.isVerified:
+    print pId
+    p = Product.objects.get(pid=pId)
+    print 'got this far'
+    print p
+    if p.model.is_verified:
         filler = ' is '
     else:
         filler = ' is not '
@@ -265,8 +267,8 @@ def generateConfirmationReply(pId, cId):
         'Registered %s \n'
         'Expires %s \n'
         'Product %s verified by lighting Africa'
-        % (filler, p.warranty.reg_date, p.warranty.exp_date))
-    
+        % (p.warranty.reg_date, p.warranty.exp_date, filler))
+    print msgText
     return msgText
     
 # Reponsd to the case where there is an existing warranty

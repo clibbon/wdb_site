@@ -71,7 +71,7 @@ def addToDatabase(detailDict,mob_num):
     else:
         print 'Tried creating warranty'
         createWarranty(detailDict,cId,pId)
-        print 'Created warranty'
+        print 'Created warranty, cid=%s, pid=%s' % (cId, pId,)
         return [True, cId, pId]
 
 # Function creates a warranty. Uses the current time and date. Assume they're
@@ -117,7 +117,6 @@ def createProductImport(request):
         p = Product.objects.get(ser_num = ser_num,
                             model = ProductModel.objects.get(pk=model_pk),
                             )
-        print 'Got this far'
         if p.importer is '':
             p.importer = importer
             p.imp_date = datetime.now().date()
