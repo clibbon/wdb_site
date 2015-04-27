@@ -19,5 +19,5 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout'),
     url(r'^testPage/$', war_manager.views.TestView.as_view(), name='test-page'),
     url(r'^search/$', war_manager.views.SearchPage, name='search-page'),
-    url(r'^viewCustomer/(?P<customer_id>[0-9]+)$', war_manager.views.customerView, name='individual-customer-page'),
+    url(r'^viewCustomer/(?P<cust_id>[0-9]+)$', war_manager.views.customerDetail, name='individual-customer-page'),
 )

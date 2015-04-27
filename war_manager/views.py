@@ -9,6 +9,7 @@ from war_manager.models import Product, Importer, Customer
 from django_twilio.decorators import twilio_view
 from war_manager.forms import ImportForm
 from war_manager.db_funs import createProductImport
+from django.views.generic.edit import UpdateView
 
 # Create your views here.
 class Home(TemplateView):
@@ -28,9 +29,13 @@ class TestView(TemplateView):
         context['action'] = reverse('search-page')
         return context
 
-def customerView(request, customer_id):
+def customerDetail(request,cust_id):
+
+    return render(request,'test.html',
+           {'Customer' : Customer.objects.get(pk=cust_id),
+            'Products' : Product.objects.filter(warranty__customer__pk=cust_id)
+            })
     
-    return render(request,'test.html')
 
 def SearchPage(request):
     print request.GET
@@ -50,7 +55,7 @@ def SearchPage(request):
     
                 
     # Now create a new object list to display the results
-    return render(request,'test.html',{'Results': qs})
+    return render(request,'manage.html',{'Results': qs})
 
 class ImportProductView(CreateView):
     form_class = ImportForm
@@ -130,6 +135,17 @@ def login_redirect(request):
         
 class ManagerHome(TemplateView):
     template_name ='manage.html'
+        
+    def get_success_url(self):
+            
+        return reverse('manager-home')
+    
+    # Get the context
+    def get_context_data(self, **kwargs):
+        
+        context = super(ManagerHome, self).get_context_data(**kwargs)
+        context['action'] = reverse('search-page')
+        return context
     
 class ImportHome(TemplateView):
     template_name ='import.html'

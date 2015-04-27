@@ -58,7 +58,7 @@
           <tr>
             <th scope="row">{{ forloop.counter }}</th>
 			<td>
-			  <a href="{% url "individual-customer-page" customer_id=result.warranty.customer.pk %}">
+			  <a href="{% url "individual-customer-page" cust_id=result.warranty.customer.pk %}">
 				{{ result.warranty.customer.whole_name }}
 			  </a>
 			</td>

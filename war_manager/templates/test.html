@@ -5,63 +5,55 @@
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron">
   <div class="container">
-    <h1>Service center</h1>
+    <h1>{{ Customer.whole_name }}</h1>
     <!-- <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p> -->
   </div>
 </div>
 
-<div class="container">
-
-  <div class="row">
-    <div class="col-md-4">
-      <h2>Search</h2>
-    </div>
-    <div class="col-md-8">
-      <h2>Results</h2>
-    </div>
+<div class='row'>
+  <div class="col-md-8">
+    <table class="table table-hover">
+	  <!-- Display their current products, and for each product it's warranty -->
+	  <thead>
+        <tr><th>&nbsp;</th>
+            <th>Model</th>
+            <th>Serial Number</th>
+            <th>Import Date</th>
+        </tr>
+      </thead>
+      
+      <tbody>
+	  {% for product in Products %}
+	  <tr data-toggle="collapse" data-target="#target{{forloop.counter}}" class="accordion-toggle">
+        <td><button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-eye-open"></span></button></td>
+        <td>{{ product.model.model }}</td>
+        <td>{{ product.ser_num }}</td>
+        <td>{{ product.imp_date }}</td>
+      </tr>
+	  <!-- The hidden content -->
+	  <tr>
+        <td colspan="12" class="hiddenRow"><div class="accordian-body collapse" id="target{{forloop.counter}}"> 
+          <table class="table table-striped">
+            <thead>
+              <tr><th>Warranty ID</th><th>Reg_date</th><th>Exp_date</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ product.warranty.wid }}</td>
+                <td>{{ product.warranty.reg_date }}</td>
+                <td>{{ product.warranty.exp_date }}</td>
+              </tr>
+           </tbody>
+         </table>
+       </div> </td>
+     </tr>
+	{% endfor %}
+	</tbody>
+	</table>
   </div>
-  <div class="row">
-    <div class="col-md-4">
-      <form action="{{ action }}" method="get">
-        <div class="form-group">
-          <label for="serialNumber">Serial number</label>
-          <input type="text" class="form-control" id="ser_num" name="ser_num" placeholder="Serial number">
-        </div>
-        <div class="form-group">
-          <label for="customerName">Customer name</label>
-          <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Customer name">
-        </div>
-        <button type="submit" class="btn btn-default">Submit</button>
-      </form>
-    </div>
-    <div class="col-md-8">
-      <table class="table table-hover">
-        <!-- <caption>Optional table caption.</caption> -->
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Name</th>
-            <!-- <th>Product</th> -->
-          </tr>
-        </thead>
-        <tbody>
-		<!-- Add the looped results here -->
-        {% for result in Results %}
-          <tr>
-            <th scope="row">3</th>
-            <td>{{ result.pid }}</td>
-            <td>{{ result.ser_num }}</td>
-            <td></td>
-        {% endfor %}
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+</div>
 
-  <div class="spacer"></div>
-
-  <!-- <a class="btn btn-default" href="#" role="button">View details &raquo;</a> -->
-
-  {% endblock %}
+<div class="col-md-8">
+  <a href="{% url "manager-home" %}">back to search</a>
+</div>
+{% endblock %}
