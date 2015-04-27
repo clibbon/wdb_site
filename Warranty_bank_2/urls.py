@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import war_manager.views
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = patterns('',
     # Examples:
@@ -21,3 +22,5 @@ urlpatterns = patterns('',
     url(r'^search/$', war_manager.views.SearchPage, name='search-page'),
     url(r'^viewCustomer/(?P<cust_id>[0-9]+)$', war_manager.views.customerDetail, name='individual-customer-page'),
 )
+
+urlpatterns += staticfiles_urlpatterns()

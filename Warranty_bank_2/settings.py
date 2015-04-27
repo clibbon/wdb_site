@@ -89,10 +89,11 @@ LOGIN_URL = 'django.contrib.auth.views.login'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 STATICFILES_DIRS = (
-                    os.path.join(os.path.dirname(__file__),'static',),
-                    )
+    os.path.join(BASE_DIR, 'static'),
+)
 STATIC_URL = '/static/'
-STATIC_ROOT = '~/workspace/Warranty_bank_2/src/sitestatic'
+STATIC_ROOT = 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 TEMPLATE_DIRS = (
                  'war_manager/templates',
