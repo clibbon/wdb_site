@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields import CharField
+from lists import regions
 
 # Create your models here.
 class Customer(models.Model):
@@ -14,8 +15,8 @@ class Customer(models.Model):
     def __str__(self):
         return self.first_name + ' ' + self.last_name
     
-    def whole_name(self):
-        return self.first_name + ' ' + self.last_name
+    def region_name(self):
+        return regions[self.region]
     
     # To show message history
     def past_messages(self):
@@ -61,7 +62,7 @@ class Product(models.Model):
     model       = models.ForeignKey(ProductModel)
     warranty    = models.ForeignKey(Warranty, null=True)
     imp_date    = models.DateField(blank=True, null=True)
-    importer    = models.ForeignKey(Importer, null=True)
+    importer    = models.ForeignKey(Importer, null=True, blank=True)
     
     def __str__(self):
         return self.ser_num
@@ -72,7 +73,7 @@ class Product(models.Model):
 class Message(models.Model):
     id          = models.AutoField(primary_key=True)
     msg_text    = models.CharField(max_length=511)
-    date_received = models.DateField(blank=True, null=True)
+    date_received = models.DateTimeField(blank=True, null=True)
     mob_number  = models.CharField(max_length=24, blank=True)
     customer    = models.ForeignKey(Customer, null=True)
     

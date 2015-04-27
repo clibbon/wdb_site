@@ -16,6 +16,7 @@ import twilio.twiml
 from db_funs import saveMsgHistory,addToDatabase
 import sys
 from django.http.response import HttpResponse
+from war_manager.models import Product
 
 class AppError(Exception):
     """ Class for all my errors from this app"""
@@ -253,7 +254,20 @@ def getKeyWord(msgText):
 
 # Receipt on successful generation of new warranty
 def generateConfirmationReply(pId, cId):
-    return 'Warranty confirmed'
+    # Get status of product and warranty
+    p = Product.objects.get(pk=pId)
+    if p.model.isVerified:
+        filler = ' is '
+    else:
+        filler = ' is not '
+    msgText = (
+        'Warranty confirmed! \n'
+        'Registered %s \n'
+        'Expires %s \n'
+        'Product %s verified by lighting Africa'
+        % (filler, p.warranty.reg_date, p.warranty.exp_date))
+    
+    return msgText
     
 # Reponsd to the case where there is an existing warranty
 def existingWarrantyReply(pId, cId):

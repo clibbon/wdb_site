@@ -108,7 +108,7 @@ def getWarrantyEnd(startDate,yearsValid):
 
 def createProductImport(request):
     # Read info about import request - who's trying to import
-    importer    = Importer.objects.filter(user_id__username=request.user)[0]
+    importer    = Importer.objects.get(user_id__username=request.user)
     ser_num     = request.POST['ser_num']
     model_pk    = request.POST['model'] # gives the model pk
     hasAnotherImporter = False          # A check that we haven't already imported the product
@@ -117,14 +117,15 @@ def createProductImport(request):
         p = Product.objects.get(ser_num = ser_num,
                             model = ProductModel.objects.get(pk=model_pk),
                             )
-        if p.importer is not None:
+        print 'Got this far'
+        if p.importer is '':
             p.importer = importer
             p.imp_date = datetime.now().date()
             p.save()
         else:
             hasAnotherImporter = True
             print "database error in CreateProductImport"
-            isNew = False
+        isNew = False
     except Product.DoesNotExist:
         Product.objects.create(ser_num  = ser_num,
                                model    = ProductModel.objects.get(pk=model_pk),

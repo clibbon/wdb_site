@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    <h1>{{ Customer }}</h1>
+    <!-- <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p> -->
+  </div>
+</div>
+
+<!-- Details of the customer -->
+<h1>Customer Details</h1>
+<p><strong>Mobile number: </strong> {{ Customer.mob_number }}
+<strong>Region: </strong> {{ Customer.region_name }}</p>
+
+<h1>Current Products and Warranties</h1>
+<div class='row'>
+  <div class="col-md-8">
+    <table class="table table-hover">
+	  <!-- Display their current products, and for each product it's warranty -->
+	  <thead>
+        <tr><th>&nbsp;</th>
+            <th>Model</th>
+            <th>Serial Number</th>
+            <th>Import Date</th>
+        </tr>
+      </thead>
+      
+      <tbody>
+	  {% for product in Products %}
+	  <tr data-toggle="collapse" data-target="#target{{forloop.counter}}" class="accordion-toggle">
+        <td><button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-eye-open"></span></button></td>
+        <td>{{ product.model.long_name }}</td>
+        <td>{{ product.ser_num }}</td>
+        <td>{{ product.imp_date }}</td>
+      </tr>
+	  <!-- The hidden content -->
+	  <tr>
+        <td colspan="12" class="hiddenRow"><div class="accordian-body collapse" id="target{{forloop.counter}}"> 
+          <table class="table table-striped">
+            <thead>
+              <tr><th>Warranty ID</th><th>Reg_date</th><th>Exp_date</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ product.warranty.wid }}</td>
+                <td>{{ product.warranty.reg_date }}</td>
+                <td>{{ product.warranty.exp_date }}</td>
+              </tr>
+           </tbody>
+         </table>
+       </div> </td>
+     </tr>
+	{% endfor %}
+	</tbody>
+	</table>
+	
+	<!-- Previous message table -->
+	<h1>Message History</h1>
+	<table>
+	  <thead>
+	    <tr><th>Received</th><th>Message</th></tr>
+	  </thead>
+	  <tbody>
+	  {% for message in Customer.message_set.all %}
+	    <tr>
+	      <td>{{ message.date_received }}</td>
+	      <td>{{ message.msg_text }}</td>
+	    </tr>
+	  {% empty %}
+	    <tr> No messages yet </tr>
+	  {% endfor %}
+	  </tbody>
+	</table>
+  </div>
+</div>
+
+<div class="col-md-8">
+  <a href="{% url "manager-home" %}">back to search</a>
+</div>
+{% endblock %}

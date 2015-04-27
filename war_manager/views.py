@@ -31,7 +31,7 @@ class TestView(TemplateView):
 
 def customerDetail(request,cust_id):
 
-    return render(request,'test.html',
+    return render(request,'customer_view.html',
            {'Customer' : Customer.objects.get(pk=cust_id),
             'Products' : Product.objects.filter(warranty__customer__pk=cust_id)
             })
@@ -72,7 +72,7 @@ class ImportProductView(CreateView):
         # Adding my own context
         user = self.request.user
         print user
-        importer = Importer.objects.get(user_id__username='test_importer')
+        importer = Importer.objects.get(user_id__username=user)
         print 'made it'
         print importer
         context['Products'] = Product.objects.filter(importer=importer)[:5]
@@ -82,11 +82,14 @@ class ImportProductView(CreateView):
 
 def addProductToDatabase(request):
     
-    isNewProduct = createProductImport(request)
-    if isNewProduct:
-        return redirect('importer-home')
-    else:
-        return HttpResponse('Product already imported')
+    try:
+        isNewProduct = createProductImport(request)
+        if isNewProduct:
+            return redirect('importer-home')
+        else:
+            return HttpResponse('Product already imported')
+    except Importer.DoesNotExist:
+        return HttpResponse('User %s does not have permission to import products' % request.user)
 
 class Placeholder(TemplateView):
     print 'at placeholder'
