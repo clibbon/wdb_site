@@ -71,13 +71,12 @@ class ImportProductView(CreateView):
         context = super(ImportProductView, self).get_context_data(**kwargs)
         # Adding my own context
         user = self.request.user
-        print user
-        importer = Importer.objects.get(user_id__username=user)
-        print 'made it'
-        print importer
-        context['Products'] = Product.objects.filter(importer=importer)[:5]
-        context['action'] = reverse('importer-home')
-        
+        try:
+            importer = Importer.objects.get(user_id__username=user)
+            context['Products'] = Product.objects.filter(importer=importer)[:5]
+            context['action'] = reverse('importer-home')
+        except Importer.DoesNotExist:
+            context['action'] = reverse('importer-home')
         return context
 
 def addProductToDatabase(request):
