@@ -22,18 +22,18 @@
   </div>
   <div class="row">
     <div class="col-md-4">
-      <form>
-        <div class="form-group">
-          <label for="itemNumber">Item number</label>
-          <input type="email" class="form-control" id="itemNumber" placeholder="Item number">
-        </div>
+      <form action="{{ action }}" method="get">
         <div class="form-group">
           <label for="serialNumber">Serial number</label>
-          <input type="password" class="form-control" id="serialNumber" placeholder="Serial number">
+          <input type="text" class="form-control" id="ser_num" name="ser_num" placeholder="Serial number">
         </div>
         <div class="form-group">
-          <label for="customerName">Customer name</label>
-          <input type="password" class="form-control" id="customerName" placeholder="Customer name">
+          <label for="customerFName">First Name</label>
+          <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name">
+        </div>
+        <div class="form-group">
+          <label for="customerSName">Surname</label>
+          <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Surname">
         </div>
         <button type="submit" class="btn btn-default">Submit</button>
       </form>
@@ -45,19 +45,29 @@
           <tr>
             <th>#</th>
             <th>Name</th>
-            <th>Product</th>
-            <th>Warranties</th>
-            <th>Messages</th>
+            <th>Model Number</th>
+            <th>Serial Number</th>
+            <th>Warranty Reg</th>
+            <th>Warranty Expires</th>
+            <!-- <th>Product</th> -->
           </tr>
         </thead>
         <tbody>
 		<!-- Add the looped results here -->
+        {% for result in Results %}
           <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
+            <th scope="row">{{ forloop.counter }}</th>
+			<td>
+			  <a href="{% url "individual-customer-page" customer_id=result.warranty.customer.pk %}">
+				{{ result.warranty.customer.whole_name }}
+			  </a>
+			</td>
+            <td>{{ result.model.model }}</td>
+            <td>{{ result.ser_num }}</td>
+            <td>{{ result.warranty.reg_date }}</td>
+            <td>{{ result.warranty.exp_date }}</td>
             <td></td>
+        {% endfor %}
           </tr>
         </tbody>
       </table>

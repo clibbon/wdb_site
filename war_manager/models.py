@@ -14,6 +14,9 @@ class Customer(models.Model):
     def __str__(self):
         return self.first_name + ' ' + self.last_name
     
+    def whole_name(self):
+        return self.first_name + ' ' + self.last_name
+    
     # To show message history
     def past_messages(self):
         return 'TODO'

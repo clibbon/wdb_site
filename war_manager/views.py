@@ -28,6 +28,10 @@ class TestView(TemplateView):
         context['action'] = reverse('search-page')
         return context
 
+def customerView(request, customer_id):
+    
+    return render(request,'test.html')
+
 def SearchPage(request):
     print request.GET
     qs = Product.objects.all()
@@ -35,12 +39,15 @@ def SearchPage(request):
     if 'ser_num' in request.GET:
         if request.GET['ser_num'] != '':
             qs = qs.filter(ser_num=request.GET['ser_num'])
-            print request.GET['ser_num']
     if 'first_name' in request.GET:
         if request.GET['first_name'] != '':
             qs = qs.filter(warranty__customer__first_name=request.GET['first_name'])
-            print request.GET['first_name']
-            print qs
+    if 'last_name' in request.GET:
+        if request.GET['last_name'] != '':
+            qs = qs.filter(warranty__customer__last_name=request.GET['last_name'])
+            #print qs
+    # Now loop through each of the results and add in the additional info
+    
                 
     # Now create a new object list to display the results
     return render(request,'test.html',{'Results': qs})
