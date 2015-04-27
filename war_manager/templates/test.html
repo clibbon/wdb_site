@@ -41,19 +41,19 @@
           <tr>
             <th>#</th>
             <th>Name</th>
-            <th>Product</th>
-            <th>Warranties</th>
-            <th>Messages</th>
+            <th>Name</th>
+            <!-- <th>Product</th> -->
           </tr>
         </thead>
         <tbody>
 		<!-- Add the looped results here -->
+        {% for result in Results %}
           <tr>
             <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
+            <td>{{ result.pid }}</td>
+            <td>{{ result.ser_num }}</td>
             <td></td>
+        {% endfor %}
           </tr>
         </tbody>
       </table>

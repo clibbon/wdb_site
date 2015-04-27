@@ -3,8 +3,10 @@ argparse==1.2.1
 django-phonenumber-field==0.7.2
 django-twilio==0.8.0
 fuzzywuzzy==0.5.0
+gunicorn==19.3.0
 httplib2==0.9.1
 nltk==3.0.2
+numpy==1.9.2
 phonenumbers==7.0.4
 psycopg2==2.6
 pytz==2015.2

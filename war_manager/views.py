@@ -33,11 +33,17 @@ def SearchPage(request):
     qs = Product.objects.all()
     # If something entered in the name field
     if 'ser_num' in request.GET:
-        qs = qs.filter(ser_num=request.GET['ser_num'])
-        print qs
+        if request.GET['ser_num'] != '':
+            qs = qs.filter(ser_num=request.GET['ser_num'])
+            print request.GET['ser_num']
     if 'first_name' in request.GET:
-        print request.GET['first_name']
-    return redirect('test-page')
+        if request.GET['first_name'] != '':
+            qs = qs.filter(warranty__customer__first_name=request.GET['first_name'])
+            print request.GET['first_name']
+            print qs
+                
+    # Now create a new object list to display the results
+    return render(request,'test.html',{'Results': qs})
 
 class ImportProductView(CreateView):
     form_class = ImportForm
