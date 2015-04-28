@@ -8,7 +8,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'Warranty_bank_2.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls), name = 'admin'),
     url(r'^$', war_manager.views.Home.as_view(), name = 'home'),
     url(r'^loginRedirect/$', war_manager.views.login_redirect, name='login-redirect'),
     url(r'^manage/$', war_manager.views.ManagerHome.as_view(), name='manager-home'),
@@ -21,6 +21,8 @@ urlpatterns = patterns('',
     url(r'^testPage/$', war_manager.views.TestView.as_view(), name='test-page'),
     url(r'^search/$', war_manager.views.SearchPage, name='search-page'),
     url(r'^viewCustomer/(?P<cust_id>[0-9]+)$', war_manager.views.customerDetail, name='individual-customer-page'),
+    url(r'^modelList/$', war_manager.views.ModelList.as_view(), name='model-manager'),
+    url(r'^modelEdit/(?P<cust_id>[0-9]+)$', war_manager.views.ModelUpdate.as_view(), name='model-edit'),
 )
 
 urlpatterns += staticfiles_urlpatterns()

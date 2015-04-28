@@ -2,8 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields import CharField
 from lists import regions
+from django.core.urlresolvers import reverse
 
-# Create your models here.
+# Customer model - the end user
 class Customer(models.Model):
     cid         = models.AutoField(primary_key=True)  # Field name made lowercase.
     first_name  = models.CharField(max_length=30, blank=False, default='None')
@@ -17,15 +18,12 @@ class Customer(models.Model):
     
     def region_name(self):
         return regions[self.region]
-    
-    # To show message history
-    def past_messages(self):
-        return 'TODO'
         
     class Meta:
         db_table = 'customer'
         verbose_name_plural = 'customers'
         
+# Importer company - allows multiple users to be attached   
 class Importer(models.Model):
     iid         = models.AutoField(primary_key=True)  # Field name made lowercase.
     user_id     = models.ForeignKey(User)
@@ -33,7 +31,8 @@ class Importer(models.Model):
     
     def __str__(self):
         return self.identity
-    
+
+# Model type 
 class ProductModel(models.Model):
     mid         = models.AutoField(primary_key=True)  # Field name made lowercase.
     model       = models.CharField(max_length=20, blank=True)
@@ -43,7 +42,10 @@ class ProductModel(models.Model):
     
     def __str__(self):
         return self.model
+    def get_absolute_url(self):
+        return reverse('model-details',kwargs={'pk':self.id})
 
+# Warranty object, sits between product and customers
 class Warranty(models.Model):
     wid         = models.AutoField(primary_key=True)  # Field name made lowercase.
     reg_date    = models.DateField(blank=True, null=True)
@@ -55,7 +57,8 @@ class Warranty(models.Model):
     
     class Meta:
         verbose_name_plural = 'Warranties'
-        
+
+# An individual instance of a product        
 class Product(models.Model):
     pid         = models.AutoField(primary_key=True)  # Field name made lowercase.
     ser_num     = models.CharField(max_length=30, blank=False)
@@ -69,7 +72,8 @@ class Product(models.Model):
     
     class Meta:
         ordering = ['-pid']
-    
+
+# The database of messages received    
 class Message(models.Model):
     id          = models.AutoField(primary_key=True)
     msg_text    = models.CharField(max_length=511)

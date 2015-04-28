@@ -29,22 +29,42 @@
   </div>
   <div class="row">
     <div class="col-md-4">
+      <!-- The item input form -->
       <form action="{% url "add-product" %}"method="POST">
       {% csrf_token %}
-        <div class="form-group">
-          <ul class="list-inline">
-            {{ form.as_ul }}
-          </ul>
-        </div>
+        {% if form.non_field_errors %}
+    	  <ul>
+            {% for error in form.non_field_errors %}
+        	  <li>{{ error }}</li>
+      		{% endfor %}
+   		  </ul>
+  		{% endif %}
+      {% for field in form %}
+  		<div id="{{ field.auto_id }}_container">
+    	  {{ field.help_text }}
+    	<div>
+      	  {{ field.label_tag }} {{ field }}
+    	</div>
+    	  <div id="{{ field.auto_id }}_errors">
+      		{{ field.errors }}
+    	  </div>
+  		</div>
+      {% endfor %}
         <button type="submit" class="btn btn-default" name="save_product" value="Save">Submit</button>
       </form>
+      <a href="{% url "model-manager" %}">Manage models</a>
     </div>
-    <div class="col-md-4 col-md-offset-4">
+    <!-- the range upload page -->
+    <div class="col-md-4">
+    
+    </div>
+    <!-- The file upload box -->
+    <div class="col-md-4">
       <form>
         <div class="form-group">
           <label for="exampleInputFile">File input</label>
           <input type="file" id="exampleInputFile">
-          <p class="help-block">Example block-level help text here.</p>
+          <p class="help-block">Files must be csv format.</p>
         </div>
         <button type="submit" class="btn btn-default">Submit</button>
       </form>
@@ -55,7 +75,7 @@
 
   <div class="row">
     <div class="col-md-12">
-      <h2>What you have added</h2>
+      <h2>Last registered products</h2>
     </div>
   </div>
   <table class="table table-striped">
