@@ -12,8 +12,6 @@ from datetime import datetime
 from war_manager.models import (Customer, Product, Warranty, ProductModel, Importer)
 from lists import regions
 import time
-from django.db.utils import IntegrityError
-from __builtin__ import False
 
 # Function to save incoming message to msg log
 def saveMsgHistory(message, sender):
@@ -21,7 +19,7 @@ def saveMsgHistory(message, sender):
     If no customer exists already, then make a new one and raise that tag'''
     c, isNew = Customer.objects.get_or_create(mob_number=sender)
     c.message_set.create(msg_text = message, 
-                                  date_received = datetime.now().date(), 
+                                  date_received = datetime.now(), 
                                   mob_number = sender)
     return isNew
     
