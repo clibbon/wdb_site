@@ -10,6 +10,7 @@
   </div>
 </div>
 
+<div class='container'>
 <!-- The table for viewing things -->
 <table class="table table-striped">
   <thead>
@@ -35,4 +36,7 @@
   </tbody>
 </table>
 
+<p><a href="{% url "model-create" %}">Add new model</a></p>
+<a href="{% url "importer-home" %}">Back to import page</a>
+</div>
 {% endblock %}

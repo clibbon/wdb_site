@@ -50,9 +50,10 @@
     	  </div>
   		</div>
       {% endfor %}
+      <p><a href="{% url "model-list" %}">Manage models</a></p>
         <button type="submit" class="btn btn-default" name="save_product" value="Save">Submit</button>
       </form>
-      <a href="{% url "model-manager" %}">Manage models</a>
+      
     </div>
     <!-- the range upload page -->
     <div class="col-md-4">

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    {% if productmodel.mid %}
+	<h1>Edit Model</h1>
+	{% else %}
+	<h1>Add New Model</h1>
+	{% endif %}
+    <!-- <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p> -->
+  </div>
+</div>
+
+<div class = 'container'>
+  <form action="{{ action }}" method="POST">
+    {% csrf_token %}
+	{{ form.as_ul }}
+	<input id="save_model" type="submit" value="Save" />
+  </form>
+</div>
+
+{% endblock %}

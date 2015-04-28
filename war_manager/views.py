@@ -17,7 +17,7 @@ class Home(TemplateView):
     template_name = 'homepage.html'
 
 class TestView(TemplateView):
-    return HttpResponse("I'm a test page")
+    template_name = 'test.html'
 
 #### Views for handling product models ####
 # Show all models in a list
@@ -30,24 +30,24 @@ class ModelList(ListView):
 # Form to create a new model
 class ModelCreate(CreateView):
     model = ProductModel
-    template_name='model_list.html'
+    template_name='model_edit.html'
     def get_success_url(self):
         return reverse('model-list')
     def get_context_data(self, **kwargs):
         context = super(ModelCreate, self).get_context_data(**kwargs)
-        context['action'] = reverse('model-new')
+        context['action'] = reverse('model-create')
         return context    
 
 # Form to update existing models
 class ModelUpdate(UpdateView):
     model = ProductModel
-    template_name='model_list.html'
+    template_name='model_edit.html'
     def get_success_url(self):
-        return reverse('model-edit')
+        return reverse('model-list')
     def get_context_data(self, **kwargs):
-        context = super(ModelCreate, self).get_context_data(**kwargs)
+        context = super(ModelUpdate, self).get_context_data(**kwargs)
         context['action'] = reverse('model-edit',
-                                    kwargs={'pk': self.get_object().id})
+                                    kwargs={'pk': self.get_object().mid})
         return context
 
 #### Views for importing products #### 
