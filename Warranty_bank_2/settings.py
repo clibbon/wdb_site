@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -37,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'war_manager',
+    'dash',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -98,5 +100,6 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 TEMPLATE_DIRS = (
                  'war_manager/templates',
                  )
+
 TWILIO_ACCOUNT_SID = 'ACcfee309f80ba0ebcfcc720b7ad679669'
 TWILIO_AUTH_TOKEN = '3f9ab5b43309dda1cd431106166ef9be'
