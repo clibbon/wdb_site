@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    <h1>Current Models</h1>
+    <!-- <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p> -->
+  </div>
+</div>
+
+<!-- The table for viewing things -->
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Short Code</th>
+      <th>Verified Status</th>
+      <th>Warranty Length</th>
+    </tr>
+  </thead>
+      
+  <tbody>
+	{% for model in object_list %}
+	  <tr>
+        <td>{{ model.long_name }} 
+          (<a href="{% url "model-edit" pk=model.mid %}">edit</a>)
+        </td>
+        <td>{{ model.model }}</td>
+        <td>{{ model.is_verified }}</td>
+        <td>{{ model.war_length }}</td>
+      </tr>
+	{% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
