@@ -16,7 +16,8 @@ import twilio.twiml
 from db_funs import saveMsgHistory,addToDatabase
 import sys
 from django.http.response import HttpResponse
-from war_manager.models import Product
+from war_manager.models import Product, ProductModel
+import traceback
 
 class AppError(Exception):
     """ Class for all my errors from this app"""
@@ -76,8 +77,9 @@ def handleMessage(request):
                         'Please reply with the word RETRY and your details '
                         'in this order:\n'
                         'Forename Surname SerialNo ModelNo Region')
+            raise
         except Exception as e:
-            print e
+            print(traceback.format_exc())
             
     return resp
 
@@ -155,41 +157,61 @@ def getDetailsFromCookie(request):
         'loaded properly')
     return detailDict
 
-# Find the alphanumeric values in the input string
+# Find the alphanumeric values in the input string, and match them up to existing 
+# model and serial numbers
 def findModelNums(words):
     possibleMatches = [] 
+    possibleSerNums = []
     for word in words:
         if not re.match("^[A-Za-z]+$", word): 
-            possibleMatches.append(word) 
-    
-    # Check for errors
-    if len(possibleMatches) > 2:
-        print possibleMatches
-        raise AppError(
-            'Could not identify serial number/model number,'
-            ' too many alphanumeric words')
-    elif len(possibleMatches) < 2:
+            possibleMatches.append(word)
+    print possibleMatches
+    # Do we have enough to search for model and sernum
+    if len(possibleMatches) < 2:
         raise AppError(
             'To few serial number/model number '
             'matches found')
     
-    # Find which is longest
-    matchLengths = [len(i) for i in possibleMatches]
-    
-    # Check lengths aren't identical
-    if matchLengths[0]==matchLengths[1]:
+    # First try to match the model (by short code)
+    possibleModelNums = []
+    for match in possibleMatches:
+        try:
+            ProductModel.objects.get(model=match)
+            possibleModelNums.append(match)
+        except ProductModel.DoesNotExist:
+            pass
+
+    # Check that we have exactly one model
+    if len(possibleModelNums) > 1:
         raise AppError(
-            'Could not distinguish serial number as same '
-            'length as model num')
-    
-    # Get the index of the serial
-    idx = matchLengths.index(max(matchLengths))
-    
-    serNum = possibleMatches.pop(idx)
-    modelNum = possibleMatches[0]
-    # Remove words from list
-    words.remove(serNum)
-    words.remove(modelNum)
+            'Multiple model matches found'
+            )
+    elif len(possibleModelNums) < 1:
+        raise AppError(
+            'No model matches found')
+    modelNum = possibleModelNums[0]
+    possibleMatches.pop(possibleMatches.index(modelNum))
+    words.pop(words.index(modelNum))
+    # Now search for serial numbers
+    serNumMatches = []
+    for sernum in possibleMatches:
+        try:
+            print sernum
+            Product.objects.get(ser_num=sernum)
+            serNumMatches.append(sernum)
+        except Product.DoesNotExist:
+            pass
+    # Check we have only one serial number
+    if len(serNumMatches) > 1:
+        raise AppError(
+            'Too many serial numbers found. Numbers were {}'.format(sernum)
+            )
+    elif len(serNumMatches) < 1:
+        raise AppError(
+            'No serial number matches found'
+            )
+    serNum = serNumMatches[0]
+    words.pop(words.index(serNum))
     return (serNum, modelNum, words)    
 
 # Return the names from the list of proper nouns
