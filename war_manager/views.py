@@ -184,7 +184,16 @@ def text_receiver(request):
         return HttpResponse('There was an error')
     
     
+#### Oh dear here is the dashboard page ####
+class DashBoardTest(TemplateView):
+    template_name ='dashboard_test.html'
     
+    # Get the context
+    def get_context_data(self, **kwargs):
+        
+        context = super(DashBoardTest, self).get_context_data(**kwargs)
+        # context['data'] = 
+        return context    
     
     
     

@@ -5,7 +5,7 @@
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron">
   <div class="container">
-    <h1>Service center</h1>
+    <h1>Search Database</h1>
     <!-- <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p> -->
   </div>
 </div>
@@ -58,9 +58,13 @@
           <tr>
             <th scope="row">{{ forloop.counter }}</th>
 			<td>
+			  {% if result.warranty %}
 			  <a href="{% url "individual-customer-page" cust_id=result.warranty.customer.pk %}">
 				{{ result.warranty.customer }}
 			  </a>
+			  {% else %}
+			  No customer registered yet
+			  {% endif %}
 			</td>
             <td>{{ result.model.model }}</td>
             <td>{{ result.ser_num }}</td>

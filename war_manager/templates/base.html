@@ -38,6 +38,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="/">Warranty manager</a>
       </div>
@@ -45,9 +46,10 @@
         <ul class="nav navbar-nav">
           <li><a href="/">Home</a></li>
           <li><a href="/import">Import</a></li>
-          <li><a href="/manage">Service center</a></li>
+          <li><a href="/manage">Customer Search</a></li>
+          <li><a href="dash">Dashboard</a></li> 
         </ul>
-        {{ user }}
+        <!-- {{ user }} -->
         {% if user.is_anonymous %}
         <form class="navbar-form navbar-right" role="form" action="{% url 'login-redirect' %}" method="POST">
         {% csrf_token %}
@@ -61,7 +63,10 @@
           <!-- <a href="{% url 'django.contrib.auth.views.login' %}">login</a> -->
         </form>
         {% else %}
-        <a href="{% url 'django.contrib.auth.views.logout' %}" class="btn btn-info navbar-btn navbar-right" role="button">Logout</a>
+        <a href="{% url 'django.contrib.auth.views.logout' %}?next=/" class="btn btn-info navbar-btn navbar-right" role="button">Sign out</a>
+        <p class="navbar-text navbar-right"> </p>
+        <p class="navbar-text navbar-right">Welcome, {{ user }}</p>
+        
         {% endif %}
       </div><!--/.navbar-collapse -->
     </div>
