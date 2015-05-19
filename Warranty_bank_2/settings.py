@@ -97,7 +97,7 @@ STATIC_ROOT = 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 TEMPLATE_DIRS = (
-                 'war_manager/templates',
+                 'war_manager/templates/war_manager',
                  )
 
 TWILIO_ACCOUNT_SID = 'ACcfee309f80ba0ebcfcc720b7ad679669'

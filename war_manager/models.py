@@ -10,8 +10,8 @@ class Customer(models.Model):
     first_name  = models.CharField(max_length=30, blank=False, default='None')
     last_name   = models.CharField(max_length=30, blank=False, default='Set')
     mob_number  = models.CharField(max_length=24, blank=True, null=True)
-    region      = models.IntegerField(blank=True, null=True)
-    profile     = models.ForeignKey(User, default = 1)
+    region      = models.IntegerField(blank=True, null=True)    # Currently regions are given a code. See lists.regions for info
+    profile     = models.ForeignKey(User, default = 1)          # The attached user profile
     
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -25,20 +25,20 @@ class Customer(models.Model):
         
 # Importer company - allows multiple users to be attached   
 class Importer(models.Model):
-    iid         = models.AutoField(primary_key=True)  # Field name made lowercase.
-    user_id     = models.ForeignKey(User)
-    identity    = models.CharField(max_length=30, blank=True)
+    iid         = models.AutoField(primary_key=True)  
+    user_id     = models.ForeignKey(User)                       # Users attached to this importer
+    identity    = models.CharField(max_length=30, blank=True)   # Common name e.g.Phillips
     
     def __str__(self):
         return self.identity
 
 # Model type 
 class ProductModel(models.Model):
-    mid         = models.AutoField(primary_key=True)  # Field name made lowercase.
-    model       = models.CharField(max_length=20, blank=True)
-    is_verified = models.BooleanField(default=False)
-    war_length  = models.IntegerField(default=0, blank=True)
-    long_name   = CharField(max_length=60, null=True)
+    mid         = models.AutoField(primary_key=True)  
+    model       = models.CharField(max_length=20, blank=True)   # Short code for model - database identifier
+    is_verified = models.BooleanField(default=False)            # Status with lighting Africa
+    war_length  = models.IntegerField(default=0, blank=True)    # Warranty length
+    long_name   = CharField(max_length=60, null=True)           # Long model name
     
     def __str__(self):
         return self.model
@@ -47,9 +47,9 @@ class ProductModel(models.Model):
 
 # Warranty object, sits between product and customers
 class Warranty(models.Model):
-    wid         = models.AutoField(primary_key=True)  # Field name made lowercase.
-    reg_date    = models.DateField(blank=True, null=True)
-    exp_date    = models.DateField(blank=True, null=True)
+    wid         = models.AutoField(primary_key=True)     
+    reg_date    = models.DateField(blank=True, null=True)       # Registration date
+    exp_date    = models.DateField(blank=True, null=True)       # Expiry date
     customer    = models.ForeignKey(Customer, null=True)
     
     def __str__(self):
@@ -60,11 +60,11 @@ class Warranty(models.Model):
 
 # An individual instance of a product        
 class Product(models.Model):
-    pid         = models.AutoField(primary_key=True)  # Field name made lowercase.
+    pid         = models.AutoField(primary_key=True)
     ser_num     = models.CharField(max_length=30, blank=False)
     model       = models.ForeignKey(ProductModel)
-    warranty    = models.ForeignKey(Warranty, null=True)
-    imp_date    = models.DateField(blank=True, null=True)
+    warranty    = models.ForeignKey(Warranty, null=True) 
+    imp_date    = models.DateField(blank=True, null=True)       # Import date
     importer    = models.ForeignKey(Importer, null=True, blank=True)
     
     def __str__(self):

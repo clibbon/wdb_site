@@ -19,78 +19,88 @@ from django.http.response import HttpResponse
 from war_manager.models import Product, ProductModel
 import traceback
 
+# Messages
+retryReply = ('Sorry your information could not be read. '
+             'Please reply with the word RETRY and your details '
+             'in this order:\n'
+             'Forename Surname SerialNo ModelNo Region')
+
+
 class AppError(Exception):
     """ Class for all my errors from this app"""
-    pass
 
-# Main function which handles texts
+# Main function which handles incoming text messages
 def handleMessage(request):
     resp = twilio.twiml.Response()
-    # Try to read the text and the sender
+    # Read the text and get the sender information
     try:
-        msgText = request.POST.__getitem__('Body')
-        msgSender = request.POST.__getitem__('From')
+        msgText = request.POST.__getitem__("Body")
+        msgSender = request.POST.__getitem__("From")
     except Exception as e:
-        print e
+        print(traceback.format_exc())
+        raise AppError("Couldn't read msg information from POST. Could not find POST[{}]".format(e))
     
-    # Try to save the message
+    # Save the message in the history folder
     try:
         saveMsgHistory(msgText, msgSender)
     except AppError as e:
-        print e
-        print 'Failed to save message'
+        print(traceback.format_exc())
+        raise AppError("Couldn't save message".format(e))
     except Exception as e:
-        print e
+        print('Oh, something unexpected went wrong')
+        print(traceback.format_exc())
     
     # Check for keywords
     keyWord = getKeyWord(msgText)
     if keyWord == 'correct':
+        # Attempt to register the warranty
         try:
-            detailDict = getDetailsFromCookie(request)
-            # Add to database
-            warCreated, cId, pId = addToDatabase(detailDict,msgSender)
+            detailDict              = getDetailsFromCookie(request)
+            warCreated, cId, pId    = addToDatabase(detailDict,msgSender)
             if warCreated:
                 resp.message(generateConfirmationReply(pId, cId))
             else:
                 resp.message(existingWarrantyReply(pId, cId))
         except Exception as e:
-            print e
-            print sys.exc_traceback.tb_lineno
+            print(traceback.format_exc())
+            raise AppError()
     elif keyWord == 'retry':
+        # Read data in a structured format
         try:
             detailDict = getStructuredTextInfo(msgText)
             resp = addDetailsToCookie(detailDict,HttpResponse(resp))
         except Exception as e:
-            print e
+            print(traceback.format_exc())
+            raise AppError('Could not read structured text info')
+            resp.message = ("Your information couldn't be read, ADD LOGIC HERE...")
     else:
         # Parse the text
         try:
-            detailDict = getTextInfo(msgText)
+            detailDict  = getTextInfo(msgText)
             resp.message(generateSuccessReply(detailDict))
-            # Store cookie
-            print resp
-            resp = addDetailsToCookie(detailDict,HttpResponse(resp))
+            resp        = addDetailsToCookie(detailDict,HttpResponse(resp))
         except AppError as e:
-            print e
-            resp.message(
-                        'Sorry your information could not be read. '
-                        'Please reply with the word RETRY and your details '
-                        'in this order:\n'
-                        'Forename Surname SerialNo ModelNo Region')
-            raise
+            print(traceback.format_exc()) 
+            raise AppError("Text info couldn't be read. Error {}".format(e))
+            resp.message(retryReply)
         except Exception as e:
-            print(traceback.format_exc())
-            
+            print(traceback.format_exc()) 
+            raise       
     return resp
 
 
 
 def getTextInfo(message, debug=False):
+    ''' Parses the information in the message 
+    and returns a dictionary containing the 
+    customer and product information.
+    '''
     # Remove all non alpha numeric characters
     message = re.sub(r'([^\s\w]|_)+', '', message) 
     # Split the text up
     words = message.split()
-    # Identify model no and serial no
+    # Identify model no and serial no by matching to 
+    # existing entries in the database.
     serNum, modelNum, words = findModelNums(words)
     if debug:
         print "After identification of serial/model num"
@@ -100,9 +110,9 @@ def getTextInfo(message, debug=False):
     if debug:
         print "Region found is %s" % region
     # Remove non-Proper-nouns
-    properNouns = selectProperNouns(words)
+    #properNouns = selectProperNouns(words) Removed 19/05/15 as it tends to cause problems with matching names to real words
     # Remove any region matches
-    words = removeRegions(properNouns,region)
+    words = removeRegions(words,region)
     # Find the names
     forename, surname = getNames(words)
     
@@ -117,6 +127,10 @@ def getTextInfo(message, debug=False):
 
 # Function to read the second attempt by parsing individual bits
 def getStructuredTextInfo(message):
+    '''
+    Note that we go from the 2nd to last words, as the first word 
+    is always RETRY.
+    '''
     words = message.split()
     detailDict = {
     'ForeName' : words[1],
@@ -126,10 +140,6 @@ def getStructuredTextInfo(message):
     'Region': words[5]
     }
     return detailDict
-
-def retryReply():
-    return 'Please enter you details in this order, separated by spaces. Forename' + \
-            ' SurName SerialNo ModelNo Region'
         
 
 # Function adds details to the response cookie
@@ -141,6 +151,7 @@ def addDetailsToCookie(details,response):
     response.set_cookie("Region",value=details['Region'])
     return response
 
+# Reads information from cookie
 def getDetailsFromCookie(request):
     detailDict = {
     'ForeName' : request.COOKIES.get('ForeName',''),
@@ -160,18 +171,22 @@ def getDetailsFromCookie(request):
 # Find the alphanumeric values in the input string, and match them up to existing 
 # model and serial numbers
 def findModelNums(words):
+    '''
+    Returns sernum, modelnum, and words.
+    ser_num is the serial number found in the database
+    model_num is the model found in the database
+    words are the remaining words
+    '''
+    # All alphanumeric words are possible matches
     possibleMatches = [] 
-    possibleSerNums = []
     for word in words:
         if not re.match("^[A-Za-z]+$", word): 
             possibleMatches.append(word)
-    print possibleMatches
     # Do we have enough to search for model and sernum
     if len(possibleMatches) < 2:
         raise AppError(
             'To few serial number/model number '
             'matches found')
-    
     # First try to match the model (by short code)
     possibleModelNums = []
     for match in possibleMatches:
@@ -180,7 +195,6 @@ def findModelNums(words):
             possibleModelNums.append(match)
         except ProductModel.DoesNotExist:
             pass
-
     # Check that we have exactly one model
     if len(possibleModelNums) > 1:
         raise AppError(
@@ -197,7 +211,7 @@ def findModelNums(words):
     for sernum in possibleMatches:
         try:
             print sernum
-            Product.objects.get(ser_num=sernum)
+            Product.objects.get(ser_num=sernum,model__model=modelNum)
             serNumMatches.append(sernum)
         except Product.DoesNotExist:
             pass
@@ -242,6 +256,8 @@ def findRegion(message,sens=70):
     return regions[idx]
 
 # Selects only proper nouns from the word list. 
+''' This function isn't used since it isn't great at picking out the name.
+'''
 def selectProperNouns(words):
     properNouns = []
     taggedWords = pos_tag(words)
@@ -304,8 +320,8 @@ def generateSuccessReply(detailDict):
         'Thankyou for registering. Your details are: \n'
         'Name - %(ForeName)s %(SurName)s, \n'
         'SerNo -  %(SerNo)s, \n' 
-        'Model %(ModNo)s, \n'
-        'Region %(Region)s. \n'
+        'Model - %(ModNo)s, \n'
+        'Region - %(Region)s. \n'
         'If these are correct, reply CORRECT to receive your receipt. If wrong'
         ' reply RETRY.'
         % detailDict)
