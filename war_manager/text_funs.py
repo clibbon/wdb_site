@@ -14,10 +14,12 @@ import re
 from nltk import pos_tag
 import twilio.twiml
 from db_funs import saveMsgHistory,addToDatabase
-import sys
 from django.http.response import HttpResponse
-from war_manager.models import Product, ProductModel
+from war_manager.models import Product, ProductModel, Customer
 import traceback
+
+# Options
+regionSens = 70 # The sensitivity of the fuzzy region matcher. Lower matches more, but is more prone to errors.
 
 # Messages
 retryReply = ('Sorry your information could not be read. '
@@ -110,12 +112,11 @@ def getTextInfo(message, debug=False):
     if debug:
         print "Region found is %s" % region
     # Remove non-Proper-nouns
-    #properNouns = selectProperNouns(words) Removed 19/05/15 as it tends to cause problems with matching names to real words
+    #     properNouns = selectProperNouns(words) Removed 19/05/15 as it tends to cause problems with matching names to real words
     # Remove any region matches
     words = removeRegions(words,region)
     # Find the names
     forename, surname = getNames(words)
-    
     detailDict = {
     'ForeName' : forename,
     'SurName' : surname,
@@ -124,6 +125,8 @@ def getTextInfo(message, debug=False):
     'Region': region
     }
     return detailDict
+
+
 
 # Function to read the second attempt by parsing individual bits
 def getStructuredTextInfo(message):
@@ -167,6 +170,8 @@ def getDetailsFromCookie(request):
         'Cookie has either timed out, or could not be '
         'loaded properly')
     return detailDict
+
+
 
 # Find the alphanumeric values in the input string, and match them up to existing 
 # model and serial numbers
@@ -228,20 +233,29 @@ def findModelNums(words):
     words.pop(words.index(serNum))
     return (serNum, modelNum, words)    
 
+
+
 # Return the names from the list of proper nouns
 def getNames(properNouns):
+    ''' We assume that the names come in the order
+    firstname, surname, and return as such. 
+    '''
+    # Check we have the epected format
     if len(properNouns) > 2:
         raise AppError('Too many names discovered')
     elif len(properNouns) < 2:
         raise AppError('Only one name discovered')
+    # Select and capitalise
     first_name = properNouns[0]
     first_name = ("".join([first_name[0].upper(),first_name[1:len(first_name)]]))        
     surname = properNouns[1]
     surname = ("".join([surname[0].upper(),surname[1:len(surname)]]))
     return first_name,surname
-    
+
+
+
 # Find the words matching the region name
-def findRegion(message,sens=70):
+def findRegion(message,sens=regionSens):
     ''' message is a string of the entire message (with punctuation removed)
     sens is the sensitivity of the fuzzy matcher. Lower = less specific '''
     ratio = []
@@ -255,6 +269,8 @@ def findRegion(message,sens=70):
         raise AppError('Could not identify a region')
     return regions[idx]
 
+
+
 # Selects only proper nouns from the word list. 
 ''' This function isn't used since it isn't great at picking out the name.
 '''
@@ -266,8 +282,10 @@ def selectProperNouns(words):
             properNouns.append(word)
     return properNouns
     
+    
+    
 # Remove found regions from the words list
-def removeRegions(words, region, sens=70):
+def removeRegions(words, region, sens=regionSens):
     ''' Again sensitivity is the sensitivity of the fuzzy matcher
     and words a list of the words in the message'''
     # See if region consists of two words
@@ -289,13 +307,12 @@ def getKeyWord(msgText):
     words = msgText.split()
     return words[0].lower()
 
+
+
 # Receipt on successful generation of new warranty
 def generateConfirmationReply(pId, cId):
     # Get status of product and warranty
-    print pId
     p = Product.objects.get(pid=pId)
-    print 'got this far'
-    print p
     if p.model.is_verified:
         filler = ' is '
     else:
@@ -306,12 +323,13 @@ def generateConfirmationReply(pId, cId):
         'Expires %s \n'
         'Product %s verified by lighting Africa'
         % (p.warranty.reg_date, p.warranty.exp_date, filler))
-    print msgText
     return msgText
-    
-# Reponsd to the case where there is an existing warranty
+
+# Response to the case where there is an existing warranty
 def existingWarrantyReply(pId, cId):
-    return 'Warranty already exists'
+    p = Product.objects.get(pid=pId)
+    c = Customer.objects.get(cid=cId)
+    return 'Warranty already exists for serial number {}, to customer {}'.format(p.ser_num, c)
     
 # Generate a response to a successful registry
 def generateSuccessReply(detailDict):
